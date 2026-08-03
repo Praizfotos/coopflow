@@ -86,4 +86,4 @@ router.get("/dashboard", async (req, res, next) => {
   }
 });
 
-export default router;
+export const analytics = router;

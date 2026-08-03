@@ -124,4 +124,4 @@ router.delete("/:id/members/:memberId", async (req, res, next) => {
   }
 });
 
-export default router;
+export const cooperative = router;

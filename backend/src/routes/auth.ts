@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { config } from "../config";
 import logger from "../utils/logger";
-import { register, login, getMe, refreshAccessToken } from "../services/authService";
+import { register, login, getMe, refreshToken } from "../services/authService";
 
 const router = Router();
 
@@ -12,12 +12,12 @@ const generateTokens = (user: { id: string; email: string; role: string }) => {
   const accessToken = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     config.jwt.secret as jwt.Secret,
-    { expiresIn: config.jwt.expiresIn }
+    { expiresIn: config.jwt.expiresIn } as any
   );
   const refreshTokenValue = jwt.sign(
     { id: user.id, type: "refresh" },
     config.jwt.refreshSecret as jwt.Secret,
-    { expiresIn: config.jwt.refreshExpiresIn }
+    { expiresIn: config.jwt.refreshExpiresIn } as any
   );
   return { accessToken, refreshToken: refreshTokenValue };
 };
@@ -131,4 +131,4 @@ router.post(
   }
 );
 
-export default router;
+export const auth = router;

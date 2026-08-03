@@ -128,4 +128,4 @@ router.get("/deposits", async (req, res, next) => {
   }
 });
 
-export default router;
+export const treasury = router;

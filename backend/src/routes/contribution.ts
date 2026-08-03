@@ -124,4 +124,4 @@ router.post("/cycles/:id/reminder", async (req, res, next) => {
   }
 });
 
-export default router;
+export const contribution = router;

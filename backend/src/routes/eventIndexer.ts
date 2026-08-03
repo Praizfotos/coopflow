@@ -30,4 +30,4 @@ router.get("/transactions", async (req, res, next) => {
   }
 });
 
-export default router;
+export const eventIndexer = router;

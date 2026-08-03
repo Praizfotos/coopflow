@@ -90,4 +90,4 @@ router.post("/send/meeting-reminder", async (req, res, next) => {
   }
 });
 
-export default router;
+export const notification = router;
