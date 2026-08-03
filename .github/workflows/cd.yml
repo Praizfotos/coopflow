@@ -1,0 +1,38 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: coopflow/coopflow-backend:latest,coopflow/coopflow-backend:${{ github.sha }}
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: frontend/Dockerfile
+          push: true
+          tags: coopflow/coopflow-frontend:latest,coopflow/coopflow-frontend:${{ github.sha }}
+      - name: Deploy to production
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            docker pull coopflow/coopflow-backend:latest
+            docker pull coopflow/coopflow-frontend:latest
+            docker compose -f /opt/coopflow/docker-compose.prod.yml up -d
+          EOF

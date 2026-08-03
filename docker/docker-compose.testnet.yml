@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  coopflow-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=testnet
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=coopflow
+      - DB_PASSWORD=coopflow_secret
+      - DB_NAME=coopflow_testnet
+      - STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
+      - STELLAR_NETWORK_PASSPHRASE=Test SDF Network ; September 2015
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  coopflow-frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+      - NEXT_PUBLIC_STELLAR_HORIZON=https://horizon-testnet.stellar.org
+      - NEXT_PUBLIC_STELLAR_NETWORK=Test SDF Network ; September 2015
+    depends_on:
+      - coopflow-backend
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: coopflow
+      POSTGRES_PASSWORD: coopflow_secret
+      POSTGRES_DB: coopflow_testnet
+    volumes:
+      - postgres_testnet_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coopflow -d coopflow_testnet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+
+volumes:
+  postgres_testnet_data:

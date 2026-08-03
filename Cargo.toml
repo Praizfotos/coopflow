@@ -1,0 +1,18 @@
+[package]
+name = "coopflow"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [
+    "contracts/treasury",
+    "contracts/contribution",
+    "contracts/rotation",
+    "contracts/governance",
+    "contracts/loan",
+    "contracts/registry",
+]
+
+[workspace.dependencies]
+soroban-sdk = "21.0.0"
+soroban-std = "21.0.0"

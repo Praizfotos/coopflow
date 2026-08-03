@@ -1,0 +1,93 @@
+version: "3.8"
+
+services:
+  coopflow-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=coopflow
+      - DB_PASSWORD=coopflow_secret
+      - DB_NAME=coopflow_db
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - STELLAR_HORIZON_URL=${STELLAR_HORIZON_URL}
+      - STELLAR_NETWORK_PASSPHRASE=${STELLAR_NETWORK_PASSPHRASE}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/backend/logs
+
+  coopflow-frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+      - NEXT_PUBLIC_STELLAR_HORIZON=${STELLAR_HORIZON_URL}
+      - NEXT_PUBLIC_STELLAR_NETWORK=${STELLAR_NETWORK_PASSPHRASE}
+    depends_on:
+      - coopflow-backend
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: coopflow
+      POSTGRES_PASSWORD: coopflow_secret
+      POSTGRES_DB: coopflow_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coopflow -d coopflow_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  soroban-rpc:
+    image: stellar/soroban-rpc:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - STELLAR_NETWORK_PASSPHRASE=${STELLAR_NETWORK_PASSPHRASE}
+      - HORIZON_URL=${STELLAR_HORIZON_URL}
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
