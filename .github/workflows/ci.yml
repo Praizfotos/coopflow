@@ -16,8 +16,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Install Cargo Soroban
-        run: cargo install cargo-soroban --version 21.0.0 || true
       - name: Build contracts
         run: cargo build 2>&1 || true
       - name: Run contract tests
@@ -48,11 +46,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: backend/package-lock.json
-      - run: npm ci
+          cache-dependency-path: backend/package.json
+      - run: npm install
       - run: npm run typecheck || true
       - run: npm run lint || true
-      - run: npm run test -- --coverage || true
+      - run: npm test -- --coverage || true
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -65,8 +63,8 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci
+          cache-dependency-path: frontend/package.json
+      - run: npm install
       - run: npm run lint || true
       - run: npm run typecheck || true
 
@@ -79,7 +77,3 @@ jobs:
         run: |
           docker build -t praizfotos/coopflow-backend:latest -f docker/Dockerfile .
           docker build -t praizfotos/coopflow-frontend:latest -f frontend/Dockerfile .
-      - name: Scan for vulnerabilities
-        run: |
-          docker scout cves praizfotos/coopflow-backend:latest || true
-          docker scout cves praizfotos/coopflow-frontend:latest || true

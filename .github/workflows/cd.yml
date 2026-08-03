@@ -30,6 +30,7 @@ jobs:
           push: true
           tags: praizfotos/coopflow-frontend:latest,praizfotos/coopflow-frontend:${{ github.sha }}
       - name: Deploy to production
+        if: ${{ secrets.SSH_HOST != '' && secrets.SSH_USER != '' }}
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             docker pull praizfotos/coopflow-backend:latest
