@@ -1,6 +1,6 @@
 import { pool } from "../database/connection";
 import logger from "../utils/logger";
-import { StellarTomlResolver, Server } from "stellar-sdk";
+import { Server } from "stellar-sdk";
 
 export const indexTransaction = async (data: {
   cooperativeId: string;

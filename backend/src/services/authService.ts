@@ -87,8 +87,8 @@ export const refreshAccessToken = async (refreshToken: string): Promise<{ access
     }
 
     const tokens = {
-      accessToken: jwt.sign({ id: user.id, email: user.email, role: user.role }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }),
-      refreshToken: jwt.sign({ id: user.id, type: "refresh" }, config.jwt.refreshSecret, { expiresIn: config.jwt.refreshExpiresIn }),
+      accessToken: jwt.sign({ id: user.id, email: user.email, role: user.role }, config.jwt.secret, { expiresIn: config.jwt.expiresIn } as any),
+      refreshToken: jwt.sign({ id: user.id, type: "refresh" }, config.jwt.refreshSecret, { expiresIn: config.jwt.refreshExpiresIn } as any),
     };
 
     return tokens;

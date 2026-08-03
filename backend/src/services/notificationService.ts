@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { pool } from "../database/connection";
 import logger from "../utils/logger";
-import nodemailer from "nodemailer";
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "smtp.example.com",
