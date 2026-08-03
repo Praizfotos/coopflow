@@ -21,18 +21,18 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
-          tags: coopflow/coopflow-backend:latest,coopflow/coopflow-backend:${{ github.sha }}
+          tags: praizfotos/coopflow-backend:latest,praizfotos/coopflow-backend:${{ github.sha }}
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
           context: .
           file: frontend/Dockerfile
           push: true
-          tags: coopflow/coopflow-frontend:latest,coopflow/coopflow-frontend:${{ github.sha }}
+          tags: praizfotos/coopflow-frontend:latest,praizfotos/coopflow-frontend:${{ github.sha }}
       - name: Deploy to production
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            docker pull coopflow/coopflow-backend:latest
-            docker pull coopflow/coopflow-frontend:latest
+            docker pull praizfotos/coopflow-backend:latest
+            docker pull praizfotos/coopflow-frontend:latest
             docker compose -f /opt/coopflow/docker-compose.prod.yml up -d
           EOF
