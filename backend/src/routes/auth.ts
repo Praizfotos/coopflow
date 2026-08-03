@@ -4,19 +4,19 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { config } from "../config";
 import logger from "../utils/logger";
-import { register, login, getMe, refreshToken } from "../services/authService";
+import { register, login, getMe, refreshAccessToken } from "../services/authService";
 
 const router = Router();
 
 const generateTokens = (user: { id: string; email: string; role: string }) => {
   const accessToken = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    config.jwt.secret,
+    config.jwt.secret as jwt.Secret,
     { expiresIn: config.jwt.expiresIn }
   );
   const refreshTokenValue = jwt.sign(
     { id: user.id, type: "refresh" },
-    config.jwt.refreshSecret,
+    config.jwt.refreshSecret as jwt.Secret,
     { expiresIn: config.jwt.refreshExpiresIn }
   );
   return { accessToken, refreshToken: refreshTokenValue };

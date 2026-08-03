@@ -10,7 +10,7 @@ router.use(authenticate);
 router.get("/", async (req, res, next) => {
   try {
     const { memberId, cooperativeId, read } = req.query;
-    const query = "SELECT * FROM notifications WHERE 1=1";
+    let query = "SELECT * FROM notifications WHERE 1=1";
     const values: unknown[] = [];
     let index = 1;
 

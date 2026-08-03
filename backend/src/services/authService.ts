@@ -77,9 +77,9 @@ export const getMe = async (id: string): Promise<User | null> => {
   };
 };
 
-export const refreshAccessToken = async (refreshToken: string): Promise<{ accessToken: string; refreshToken: string } | null> => {
+export const refreshToken = async (refreshTokenValue: string): Promise<{ accessToken: string; refreshToken: string } | null> => {
   try {
-    const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as { id: string };
+    const decoded = jwt.verify(refreshTokenValue, config.jwt.refreshSecret) as { id: string };
     const user = await getMe(decoded.id);
 
     if (!user) {
