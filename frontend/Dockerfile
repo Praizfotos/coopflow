@@ -16,7 +16,6 @@ WORKDIR /app/frontend
 RUN apk add --no-cache curl
 
 COPY --from=builder /app/frontend/.next ./.next
-COPY --from=builder /app/frontend/public ./public
 COPY --from=builder /app/frontend/package*.json ./
 COPY --from=builder /app/frontend/node_modules ./node_modules
 

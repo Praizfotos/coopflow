@@ -22,7 +22,6 @@ RUN apk add --no-cache curl
 COPY --from=builder /app/backend/dist ./backend/dist
 COPY --from=builder /app/backend/node_modules ./backend/node_modules
 COPY --from=builder /app/frontend/.next ./frontend/.next
-COPY --from=builder /app/frontend/public ./frontend/public
 COPY --from=builder /app/frontend/package*.json ./frontend/
 
 COPY backend/package.json ./backend/package.json
